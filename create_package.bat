@@ -1,6 +1,6 @@
 @echo off
 
-
+del bot_pkg.zip
 mkdir template
 xcopy src template /s/e/
 move template\server_main.py template\lambda_function.py

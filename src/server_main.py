@@ -1,6 +1,5 @@
 """
-Simple echo Telegram Bot example on Aiogram framework using AWS API
-Gateway & Lambda.
+Тут будет заголовок
 """
 
 
@@ -9,42 +8,28 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher, types
-# Logger initialization and logging level setting
-log = logging.getLogger(__name__)
-log.setLevel(os.environ.get('LOGGING_LEVEL', 'info').upper())
-
-
-# Handlers
 
 from create_bot import dp, bot
 from handlers import admin, client
 
 
-async def start(message: types.Message):
-    await message.reply('Hello, {}!'.format(message.from_user.first_name))
+"""Logger initialization and logging level setting"""
+log = logging.getLogger(__name__)
+log.setLevel(os.environ.get('LOGGING_LEVEL', 'info').upper())
 
 
-async def echo(message: types.Message):
-    await message.answer(message.text + admin.meow())
-
-
-# AWS Lambda funcs
 async def register_handlers(dp: Dispatcher):
     """Registration all handlers before processing update."""
     # admin.register_handlers_admin(dp)
     client.register_handlers_client(dp)
-    # dp.register_message_handler(start, commands=['start'])
-    # dp.register_message_handler(echo)
 
     log.debug('Handlers are registered.')
 
 
 async def process_event(event, dp: Dispatcher):
+    """Преобразование события AWS Lambda в обновление
+    и обработка этого обновления.
     """
-    Converting an AWS Lambda event to an update and handling that
-    update.
-    """
-
     log.debug('Update: ' + str(event))
 
     Bot.set_current(dp.bot)
@@ -53,14 +38,11 @@ async def process_event(event, dp: Dispatcher):
 
 
 async def main(event):
+    """Асинхронная оболочка для инициализации 
+    бота и диспетчера и запуска последующих функций.
     """
-    Asynchronous wrapper for initializing the bot and dispatcher,
-    and launching subsequent functions.
-    """
-
     await register_handlers(dp)
     await process_event(event, dp)
-
     return 'ok'
 
 
